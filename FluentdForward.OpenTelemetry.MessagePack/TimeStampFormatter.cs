@@ -8,7 +8,7 @@ public class TimeStampFormatter : global::MessagePack.Formatters.IMessagePackFor
     {
         var timestamp = value - DateTime.UnixEpoch;
 
-        writer.WriteInt64((long)timestamp.TotalMilliseconds * 1000);
+        writer.WriteInt64((long)timestamp.TotalSeconds);
     }
 
     public DateTime Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options) => throw new NotSupportedException();

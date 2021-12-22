@@ -52,7 +52,13 @@ internal class LogRecordFormatter : IMessagePackFormatter<LogRecord>
             properties.Add((ref MessagePackWriter writer) =>
             {
                 WriteHeader(ref writer, nameof(value.State), options);
-                global::MessagePack.MessagePackSerializer.Serialize(value.State.GetType(), ref writer, value.State, options);
+
+                var stateType = value.State.GetType();
+
+                if (stateType.Name == "FormattedLogValues")
+                    writer.WriteString(Encoding.UTF8.GetBytes(value.State.ToString()!));
+                else
+                    global::MessagePack.MessagePackSerializer.Serialize(stateType, ref writer, value.State, options);
             });
         if (value.StateValues != null)
             properties.Add((ref MessagePackWriter writer) =>

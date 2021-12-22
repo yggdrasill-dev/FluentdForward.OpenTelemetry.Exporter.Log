@@ -8,7 +8,7 @@ public class LogRecordFormatterResolver : IFormatterResolver
 {
     public static readonly IFormatterResolver Instance = new LogRecordFormatterResolver();
 
-    private Lazy<LogRecordFormatter> m_LogRecordFormatter = new Lazy<LogRecordFormatter>(() => new LogRecordFormatter());
+    private Lazy<LogRecordFormatter> m_LogRecordFormatter = new(() => new LogRecordFormatter());
 
     public IMessagePackFormatter<T>? GetFormatter<T>()
     {
