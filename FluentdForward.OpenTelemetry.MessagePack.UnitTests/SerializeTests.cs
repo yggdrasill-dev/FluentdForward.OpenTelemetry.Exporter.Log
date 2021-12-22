@@ -103,7 +103,7 @@ public class SerializeTests
             Message = null
         };
 
-        var expected = "[\"test\",1640192104286000,null]";
+        var expected = "[\"test\",1640192104,null]";
 
         var bytes = global::MessagePack.MessagePackSerializer.Serialize(payload, m_SerializerOptions);
         var actual = global::MessagePack.MessagePackSerializer.ConvertToJson(bytes);
@@ -141,7 +141,7 @@ public class SerializeTests
             Message = record
         };
 
-        var expected = "[\"test\",1640180622594000,{\"CategoryName\":\"Test.Serialize\",\"EventId\":{\"Id\":1,\"Name\":null},\"FormattedMessage\":\"aabbcc\",\"LogLevel\":\"Information\",\"State\":{\"m\":\"aabbcc\"},\"Timestamp\":\"2021-12-22T05:43:42.5945187Z\",\"TraceFlags\":\"None\"}]";
+        var expected = "[\"test\",1640180622,{\"CategoryName\":\"Test.Serialize\",\"EventId\":{\"Id\":1,\"Name\":null},\"FormattedMessage\":\"aabbcc\",\"LogLevel\":\"Information\",\"State\":{\"m\":\"aabbcc\"},\"Timestamp\":\"2021-12-22T05:43:42.5945187Z\",\"TraceFlags\":\"None\"}]";
 
         var bytes = global::MessagePack.MessagePackSerializer.Serialize(payload, m_SerializerOptions);
         var actual = global::MessagePack.MessagePackSerializer.ConvertToJson(bytes);
