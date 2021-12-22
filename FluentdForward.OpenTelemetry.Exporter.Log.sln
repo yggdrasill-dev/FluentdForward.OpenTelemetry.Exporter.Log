@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.32014.148
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentdForward.OpenTelemetry.Exporter.Logs", "FluentdForward.OpenTelemetry.Exporter.Logs\FluentdForward.OpenTelemetry.Exporter.Logs.csproj", "{BC0E99C9-0B28-4350-8F2E-951CEF0E2A45}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FluentdForward.OpenTelemetry.Exporter.Logs", "FluentdForward.OpenTelemetry.Exporter.Logs\FluentdForward.OpenTelemetry.Exporter.Logs.csproj", "{BC0E99C9-0B28-4350-8F2E-951CEF0E2A45}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentdForward.OpenTelemetry.MessagePack", "FluentdForward.OpenTelemetry.MessagePack\FluentdForward.OpenTelemetry.MessagePack.csproj", "{740FC394-0E30-4913-8679-27CE049982C4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FluentdForward.OpenTelemetry.MessagePack", "FluentdForward.OpenTelemetry.MessagePack\FluentdForward.OpenTelemetry.MessagePack.csproj", "{740FC394-0E30-4913-8679-27CE049982C4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentdForward.OpenTelemetry.MessagePack.UnitTests", "FluentdForward.OpenTelemetry.MessagePack.UnitTests\FluentdForward.OpenTelemetry.MessagePack.UnitTests.csproj", "{56FFB6F9-3520-40D2-9294-D29591CDD7C1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{740FC394-0E30-4913-8679-27CE049982C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{740FC394-0E30-4913-8679-27CE049982C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{740FC394-0E30-4913-8679-27CE049982C4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{56FFB6F9-3520-40D2-9294-D29591CDD7C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{56FFB6F9-3520-40D2-9294-D29591CDD7C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{56FFB6F9-3520-40D2-9294-D29591CDD7C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{56FFB6F9-3520-40D2-9294-D29591CDD7C1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

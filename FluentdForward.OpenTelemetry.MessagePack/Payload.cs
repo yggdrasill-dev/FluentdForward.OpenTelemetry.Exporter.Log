@@ -6,7 +6,7 @@ namespace FluentdForward.OpenTelemetry.MessagePack;
 /// The class that defines a payload for sending to fluentd.
 /// </summary>
 [MessagePackObject]
-internal class Payload<TMessage>
+public class Payload<TMessage>
 {
     /// <summary>
     /// Tag.
@@ -18,7 +18,8 @@ internal class Payload<TMessage>
     /// Timestamp.
     /// </summary>
     [Key(1)]
-    public long Timestamp { get; set; }
+    [MessagePackFormatter(typeof(TimeStampFormatter))]
+    public DateTime Timestamp { get; set; }
 
     /// <summary>
     /// Message.

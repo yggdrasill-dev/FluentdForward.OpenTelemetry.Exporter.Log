@@ -17,7 +17,7 @@ internal class MessagePackSerializer : IMessagePackSerializer
         var payload = new Payload<LogRecord>
         {
             Tag = tag,
-            Timestamp = DateTimeOffset.Now.ToUnixTimeSeconds(),
+            Timestamp = DateTime.Now,
             Message = message
         };
 
