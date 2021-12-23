@@ -1,6 +1,7 @@
 ﻿using FluentdForward.OpenTelemetry.Exporter.Logs;
 using MessagePack;
 using MessagePack.Resolvers;
+using OpenTelemetry;
 using OpenTelemetry.Logs;
 
 namespace FluentdForward.OpenTelemetry.MessagePack;
@@ -12,7 +13,7 @@ internal class MessagePackSerializer : IMessagePackSerializer
 	/// <summary>
 	/// Create a new <see cref="MessagePackSerializer"/> instance.
 	/// </summary>
-	public MessagePackSerializer(IFormatterResolver[] formatterResolvers)
+	public MessagePackSerializer(IFormatterResolver[]? formatterResolvers = null)
 	{
 		if (formatterResolvers == null || formatterResolvers.Length == 0)
 			m_Options = MessagePackSerializerOptions.Standard
@@ -21,8 +22,8 @@ internal class MessagePackSerializer : IMessagePackSerializer
 				BuiltinResolver.Instance,
 				AttributeFormatterResolver.Instance,
 
-                // replace enum resolver
-                DynamicEnumAsStringResolver.Instance,
+				// replace enum resolver
+				DynamicEnumAsStringResolver.Instance,
 
 				DynamicGenericResolver.Instance,
 				DynamicUnionResolver.Instance,
@@ -30,8 +31,8 @@ internal class MessagePackSerializer : IMessagePackSerializer
 
 				PrimitiveObjectResolver.Instance,
 
-                // final fallback(last priority)
-                DynamicContractlessObjectResolver.Instance,
+				// final fallback(last priority)
+				DynamicContractlessObjectResolver.Instance,
 			}));
 		else
 			m_Options = MessagePackSerializerOptions.Standard
@@ -39,15 +40,24 @@ internal class MessagePackSerializer : IMessagePackSerializer
 	}
 
 	/// <inheritdoc cref="IMessagePackSerializer.Serialize{T}(string, T)" />
-	public byte[] Serialize(string tag, LogRecord message)
+	public byte[] Serialize(string tag, Batch<LogRecord> batch)
 	{
-		var payload = new Payload<LogRecord>
+		var payload = new ArrayPayload<LogRecord>
 		{
 			Tag = tag,
-			Timestamp = message.Timestamp,
-			Message = message
+			Body = ReadAsPayloadBody(batch)
 		};
 
 		return global::MessagePack.MessagePackSerializer.Serialize(payload, m_Options);
+	}
+
+	private IEnumerable<ArrayPayloadBody<LogRecord>> ReadAsPayloadBody(Batch<LogRecord> batch)
+	{
+		foreach (var record in batch)
+			yield return new ArrayPayloadBody<LogRecord>
+			{
+				Timestamp = record.Timestamp,
+				Message = record
+			};
 	}
 }

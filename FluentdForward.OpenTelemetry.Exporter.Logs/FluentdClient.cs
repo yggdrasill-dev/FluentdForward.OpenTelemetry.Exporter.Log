@@ -1,4 +1,5 @@
 ﻿using System.Net.Sockets;
+using OpenTelemetry;
 using OpenTelemetry.Logs;
 
 namespace FluentdForward.OpenTelemetry.Exporter.Logs;
@@ -42,15 +43,12 @@ internal class FluentdClient : IDisposable
 		await _tcp.ConnectAsync(_setting.Host, _setting.Port).ConfigureAwait(false);
 	}
 
-	public async ValueTask SendAsync(string tag, LogRecord message)
+	public async ValueTask SendAsync(string tag, Batch<LogRecord> batch)
 	{
-		var value = _setting.Serializer!.Serialize(tag, message);
+		var value = _setting.Serializer!.Serialize(tag, batch);
 
 		await SendAsyncInternal(value).ConfigureAwait(false);
 	}
-
-	public async ValueTask FlushAsync()
-		=> await _stream.FlushAsync().ConfigureAwait(false);
 
 	/// <summary>
 	/// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
@@ -87,5 +85,7 @@ internal class FluentdClient : IDisposable
 		_stream = _tcp.GetStream();
 
 		await _stream.WriteAsync(message, 0, message.Length).ConfigureAwait(false);
+
+		await _stream.FlushAsync().ConfigureAwait(false);
 	}
 }

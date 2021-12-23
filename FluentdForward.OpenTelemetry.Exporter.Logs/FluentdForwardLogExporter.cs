@@ -21,7 +21,7 @@ internal class FluentdForwardLogExporter : BaseExporter<LogRecord>
 
 		try
 		{
-			ExportAsync(batch).GetAwaiter().GetResult();
+			m_ExportClient.SendAsync(m_FluentdOptions.Tag, batch).GetAwaiter().GetResult();
 
 			return ExportResult.Success;
 		}
@@ -30,13 +30,5 @@ internal class FluentdForwardLogExporter : BaseExporter<LogRecord>
 			FluentdForwardExporterEventSource.Log.ExportMethodException(ex);
 			return ExportResult.Failure;
 		}
-	}
-
-	private async Task ExportAsync(Batch<LogRecord> batch)
-	{
-		foreach (var record in batch)
-			await m_ExportClient.SendAsync(m_FluentdOptions.Tag, record).ConfigureAwait(false);
-
-		await m_ExportClient.FlushAsync().ConfigureAwait(false);
 	}
 }

@@ -1,4 +1,5 @@
-﻿using OpenTelemetry.Logs;
+﻿using OpenTelemetry;
+using OpenTelemetry.Logs;
 
 namespace FluentdForward.OpenTelemetry.Exporter.Logs;
 
@@ -7,5 +8,5 @@ namespace FluentdForward.OpenTelemetry.Exporter.Logs;
 /// </summary>
 public interface IMessagePackSerializer
 {
-	byte[] Serialize(string tag, LogRecord message);
+	byte[] Serialize(string tag, Batch<LogRecord> batch);
 }

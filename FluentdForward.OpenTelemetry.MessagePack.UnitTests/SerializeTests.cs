@@ -5,6 +5,7 @@ using MessagePack;
 using MessagePack.Resolvers;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using OpenTelemetry;
 using OpenTelemetry.Logs;
 
 namespace FluentdForward.OpenTelemetry.MessagePack.UnitTests;
@@ -180,9 +181,44 @@ public class SerializeTests
 			}
 		};
 
-		var expected = "[\"ttt\",[[1640180622,{\"CategoryName\":\"Test.Serialize\",\"EventId\":{\"Id\":1,\"Name\":null},\"FormattedMessage\":\"aabbcc\",\"LogLevel\":\"Information\",\"State\":{\"m\":\"aabbcc\"},\"Timestamp\":\"2021-12-22T05:43:42.5945187Z\",\"TraceFlags\":\"None\"}]]]"; ;
+		var expected = "[\"ttt\",[[1640180622,{\"CategoryName\":\"Test.Serialize\",\"EventId\":{\"Id\":1,\"Name\":null},\"FormattedMessage\":\"aabbcc\",\"LogLevel\":\"Information\",\"State\":{\"m\":\"aabbcc\"},\"Timestamp\":\"2021-12-22T05:43:42.5945187Z\",\"TraceFlags\":\"None\"}]]]";
 
 		var bytes = global::MessagePack.MessagePackSerializer.Serialize(array, m_SerializerOptions);
+		var actual = global::MessagePack.MessagePackSerializer.ConvertToJson(bytes);
+
+		Assert.AreEqual(expected, actual);
+	}
+
+	[TestMethod]
+	public void MessagePackSerializer_Serialize_Test()
+	{
+		var sut = new MessagePackSerializer();
+
+		var batch = new Batch<LogRecord>(new[] {
+			(LogRecord)Activator.CreateInstance(
+			typeof(LogRecord),
+			BindingFlags.CreateInstance | BindingFlags.NonPublic | BindingFlags.Instance,
+			null,
+			new object?[] {
+				default(IExternalScopeProvider),
+				DateTime.Parse("2021-12-22T05:43:42.5945187Z"),
+				"Test.Serialize",
+				LogLevel.Information,
+				new EventId(1),
+				"aabbcc",
+				new{
+					m = "aabbcc"
+				},
+				default(Exception),
+				default(IReadOnlyList<KeyValuePair<string, object>>)
+			},
+			null,
+			null)!
+		}, 1);
+
+		var expected = "[\"ttt\",[[1640180622,{\"CategoryName\":\"Test.Serialize\",\"EventId\":{\"Id\":1,\"Name\":null},\"FormattedMessage\":\"aabbcc\",\"LogLevel\":\"Information\",\"State\":{\"m\":\"aabbcc\"},\"Timestamp\":\"2021-12-22T05:43:42.5945187Z\",\"TraceFlags\":\"None\"}]]]";
+
+		var bytes = sut.Serialize("ttt", batch);
 		var actual = global::MessagePack.MessagePackSerializer.ConvertToJson(bytes);
 
 		Assert.AreEqual(expected, actual);
