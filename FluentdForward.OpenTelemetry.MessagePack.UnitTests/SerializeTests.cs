@@ -119,4 +119,72 @@ public class SerializeTests
 
 		Assert.AreEqual(expected, actual);
 	}
+
+	[TestMethod]
+	public void ArrayPayload_Serialize_Test()
+	{
+		var array = new ArrayPayload<string>
+		{
+			Tag = "ttt",
+			Body = new[] {
+				new ArrayPayloadBody<string>{
+					Timestamp = DateTime.Parse("2021-12-22T05:43:42.5945187Z"),
+					Message = "test1"
+				},
+				new ArrayPayloadBody<string>{
+					Timestamp = DateTime.Parse("2021-12-22T05:43:42.5945187Z"),
+					Message = "test2"
+				},
+			}
+		};
+
+		var expected = "[\"ttt\",[[1640180622,\"test1\"],[1640180622,\"test2\"]]]";
+
+		var bytes = global::MessagePack.MessagePackSerializer.Serialize(array, m_SerializerOptions);
+		var actual = global::MessagePack.MessagePackSerializer.ConvertToJson(bytes);
+
+		Assert.AreEqual(expected, actual);
+	}
+
+	[TestMethod]
+	public void ArrayPayload_With_LogRecord_Serialize_Test()
+	{
+		var record = (LogRecord)Activator.CreateInstance(
+			typeof(LogRecord),
+			BindingFlags.CreateInstance | BindingFlags.NonPublic | BindingFlags.Instance,
+			null,
+			new object?[] {
+				default(IExternalScopeProvider),
+				DateTime.Parse("2021-12-22T05:43:42.5945187Z"),
+				"Test.Serialize",
+				LogLevel.Information,
+				new EventId(1),
+				"aabbcc",
+				new{
+					m = "aabbcc"
+				},
+				default(Exception),
+				default(IReadOnlyList<KeyValuePair<string, object>>)
+			},
+			null,
+			null)!;
+
+		var array = new ArrayPayload<LogRecord>
+		{
+			Tag = "ttt",
+			Body = new[] {
+				new ArrayPayloadBody<LogRecord>{
+					Timestamp = DateTime.Parse("2021-12-22T05:43:42.5945187Z"),
+					Message = record
+				}
+			}
+		};
+
+		var expected = "[\"ttt\",[[1640180622,{\"CategoryName\":\"Test.Serialize\",\"EventId\":{\"Id\":1,\"Name\":null},\"FormattedMessage\":\"aabbcc\",\"LogLevel\":\"Information\",\"State\":{\"m\":\"aabbcc\"},\"Timestamp\":\"2021-12-22T05:43:42.5945187Z\",\"TraceFlags\":\"None\"}]]]"; ;
+
+		var bytes = global::MessagePack.MessagePackSerializer.Serialize(array, m_SerializerOptions);
+		var actual = global::MessagePack.MessagePackSerializer.ConvertToJson(bytes);
+
+		Assert.AreEqual(expected, actual);
+	}
 }

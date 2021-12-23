@@ -3,7 +3,7 @@
 namespace FluentdForward.OpenTelemetry.MessagePack;
 
 [MessagePackObject]
-internal class ArrayPayload<TMessage>
+public class ArrayPayload<TMessage>
 {
 	/// <summary>
 	/// Tag.

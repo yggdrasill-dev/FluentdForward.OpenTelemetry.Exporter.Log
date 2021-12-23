@@ -3,13 +3,14 @@
 namespace FluentdForward.OpenTelemetry.MessagePack;
 
 [MessagePackObject]
-internal class ArrayPayloadBody<TMessage>
+public class ArrayPayloadBody<TMessage>
 {
 	/// <summary>
 	/// Timestamp.
 	/// </summary>
 	[Key(0)]
-	public long Timestamp { get; set; }
+	[MessagePackFormatter(typeof(TimeStampFormatter))]
+	public DateTime Timestamp { get; set; }
 
 	/// <summary>
 	/// Message.
