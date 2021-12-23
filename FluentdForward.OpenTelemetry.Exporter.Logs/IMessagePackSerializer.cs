@@ -7,5 +7,5 @@ namespace FluentdForward.OpenTelemetry.Exporter.Logs;
 /// </summary>
 public interface IMessagePackSerializer
 {
-    byte[] Serialize(string tag, LogRecord message);
+	byte[] Serialize(string tag, LogRecord message);
 }

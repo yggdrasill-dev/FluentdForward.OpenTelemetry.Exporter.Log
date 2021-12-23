@@ -6,14 +6,14 @@ var builder = Host.CreateDefaultBuilder(args);
 
 builder.ConfigureLogging(logging =>
 {
-    logging.AddOpenTelemetry(otlOpt =>
-    {
-        otlOpt.AddFluentdForwardExporter(options =>
-        {
-            options.Tag = "test";
-            options.UseMessagePack();
-        });
-    });
+	logging.AddOpenTelemetry(otlOpt =>
+	{
+		otlOpt.AddFluentdForwardExporter(options =>
+		{
+			options.Tag = "test";
+			options.UseMessagePack();
+		});
+	});
 });
 
 var app = builder.Build();

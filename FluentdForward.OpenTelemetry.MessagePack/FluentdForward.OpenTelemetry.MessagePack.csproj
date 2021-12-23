@@ -1,19 +1,37 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFrameworks>net6.0;net5.0</TargetFrameworks>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<LangVersion>10</LangVersion>
+		<Version>0.0.1-beta</Version>
+		<Authors>Phoenix</Authors>
+		<Company>Valhalla</Company>
+		<Copyright>Copyright © 2021 Phoenix</Copyright>
+		<PackageProjectUrl>https://github.com/yggdrasill-dev/FluentdForward.OpenTelemetry.Exporter.Log</PackageProjectUrl>
+		<RepositoryUrl>git@github.com:yggdrasill-dev/FluentdForward.OpenTelemetry.Exporter.Log.git</RepositoryUrl>
+		<PackageTags>OpenTelemetry Fluentd MessagePack</PackageTags>
+		<Description>FluentdFroward.OpenTelemetry.Exporter.Log MessagePack Serializer.</Description>
+		<IsPackable>true</IsPackable>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="MessagePack" Version="2.3.85" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.0" />
-    <PackageReference Include="System.Memory" Version="4.5.4" />
-  </ItemGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net6.0|AnyCPU'">
+		<WarningLevel>5</WarningLevel>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\FluentdForward.OpenTelemetry.Exporter.Logs\FluentdForward.OpenTelemetry.Exporter.Logs.csproj" />
-  </ItemGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net6.0|AnyCPU'">
+		<WarningLevel>5</WarningLevel>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="MessagePack" Version="2.3.85" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.0" />
+		<PackageReference Include="System.Memory" Version="4.5.4" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\FluentdForward.OpenTelemetry.Exporter.Logs\FluentdForward.OpenTelemetry.Exporter.Logs.csproj" />
+	</ItemGroup>
 
 </Project>
