@@ -41,6 +41,7 @@ jobs:
         with:
           # Artifact name
           name: nuget
+          
           # A file, directory or wildcard pattern that describes what to upload
           path: |
             FluentdForward.OpenTelemetry.Exporter.Logs/bin/${{env.BuildConfiguration}}/*.nupkg
@@ -59,4 +60,4 @@ jobs:
           path: nuget
       - name: push
         run: |
-          dotnet nuget push "nuget\*.nupkg" -s "$($env:NugetSource)" -k "${{ secrets.PUBNUGETAPIKEY  }}" --skip-duplicate
+          dotnet nuget push "nuget\**\*.nupkg" -s "$($env:NugetSource)" -k "${{ secrets.PUBNUGETAPIKEY  }}" --skip-duplicate
