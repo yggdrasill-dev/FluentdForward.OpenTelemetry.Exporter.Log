@@ -9,49 +9,48 @@ namespace FluentdForward.OpenTelemetry.MessagePack;
 
 internal class LogRecordFormatter : IMessagePackFormatter<LogRecord>
 {
-	private static readonly IFormatterResolver _StandardResolver = MessagePackSerializerOptions.Standard.Resolver;
-
 	public void Serialize(ref MessagePackWriter writer, LogRecord value, MessagePackSerializerOptions options)
 	{
-		var properties = new List<WriteProperty>();
-
-		properties.Add((ref MessagePackWriter writer) =>
+		var properties = new List<WriteProperty>
 		{
-			WriteHeader(ref writer, nameof(value.CategoryName), options);
-			options.Resolver.GetFormatter<string>().Serialize(ref writer, value.CategoryName, options);
-		});
-		properties.Add((ref MessagePackWriter writer) =>
-		{
-			WriteHeader(ref writer, nameof(value.EventId), options);
-			options.Resolver.GetFormatter<EventId>().Serialize(ref writer, value.EventId, options);
-		});
+			(ref MessagePackWriter writer) =>
+			{
+				LogRecordFormatter.WriteHeader(ref writer, nameof(value.CategoryName));
+				options.Resolver.GetFormatter<string>().Serialize(ref writer, value.CategoryName, options);
+			},
+			(ref MessagePackWriter writer) =>
+			{
+				LogRecordFormatter.WriteHeader(ref writer, nameof(value.EventId));
+				options.Resolver.GetFormatter<EventId>().Serialize(ref writer, value.EventId, options);
+			}
+		};
 		if (value.Exception != null)
 			properties.Add((ref MessagePackWriter writer) =>
 			{
-				WriteHeader(ref writer, nameof(value.Exception), options);
+				LogRecordFormatter.WriteHeader(ref writer, nameof(value.Exception));
 				options.Resolver.GetFormatter<string>().Serialize(ref writer, value.Exception.ToString(), options);
 			});
 		if (value.FormattedMessage != null)
 			properties.Add((ref MessagePackWriter writer) =>
 			{
-				WriteHeader(ref writer, nameof(value.FormattedMessage), options);
+				LogRecordFormatter.WriteHeader(ref writer, nameof(value.FormattedMessage));
 				options.Resolver.GetFormatter<string>().Serialize(ref writer, value.FormattedMessage, options);
 			});
 		properties.Add((ref MessagePackWriter writer) =>
 		{
-			WriteHeader(ref writer, nameof(value.LogLevel), options);
+			LogRecordFormatter.WriteHeader(ref writer, nameof(value.LogLevel));
 			options.Resolver.GetFormatter<LogLevel>().Serialize(ref writer, value.LogLevel, options);
 		});
 		if (value.SpanId != default)
 			properties.Add((ref MessagePackWriter writer) =>
 			{
-				WriteHeader(ref writer, nameof(value.SpanId), options);
+				LogRecordFormatter.WriteHeader(ref writer, nameof(value.SpanId));
 				options.Resolver.GetFormatter<string>().Serialize(ref writer, value.SpanId.ToString(), options);
 			});
 		if (value.State != null)
 			properties.Add((ref MessagePackWriter writer) =>
 			{
-				WriteHeader(ref writer, nameof(value.State), options);
+				LogRecordFormatter.WriteHeader(ref writer, nameof(value.State));
 
 				var stateType = value.State.GetType();
 
@@ -63,29 +62,29 @@ internal class LogRecordFormatter : IMessagePackFormatter<LogRecord>
 		if (value.StateValues != null)
 			properties.Add((ref MessagePackWriter writer) =>
 			{
-				WriteHeader(ref writer, nameof(value.StateValues), options);
+				LogRecordFormatter.WriteHeader(ref writer, nameof(value.StateValues));
 				options.Resolver.GetFormatter<IReadOnlyList<KeyValuePair<string, object>>>().Serialize(ref writer, value.StateValues, options);
 			});
 		properties.Add((ref MessagePackWriter writer) =>
 		{
-			WriteHeader(ref writer, nameof(value.Timestamp), options);
+			LogRecordFormatter.WriteHeader(ref writer, nameof(value.Timestamp));
 			options.Resolver.GetFormatter<DateTime>().Serialize(ref writer, value.Timestamp, options);
 		});
 		properties.Add((ref MessagePackWriter writer) =>
 		{
-			WriteHeader(ref writer, nameof(value.TraceFlags), options);
+			LogRecordFormatter.WriteHeader(ref writer, nameof(value.TraceFlags));
 			options.Resolver.GetFormatter<ActivityTraceFlags>().Serialize(ref writer, value.TraceFlags, options);
 		});
 		if (value.TraceId != default)
 			properties.Add((ref MessagePackWriter writer) =>
 			{
-				WriteHeader(ref writer, nameof(value.TraceId), options);
+				LogRecordFormatter.WriteHeader(ref writer, nameof(value.TraceId));
 				options.Resolver.GetFormatter<string>().Serialize(ref writer, value.TraceId.ToString(), options);
 			});
 		if (value.TraceState != null)
 			properties.Add((ref MessagePackWriter writer) =>
 			{
-				WriteHeader(ref writer, nameof(value.TraceState), options);
+				LogRecordFormatter.WriteHeader(ref writer, nameof(value.TraceState));
 				options.Resolver.GetFormatter<string>().Serialize(ref writer, value.TraceState, options);
 			});
 
@@ -97,7 +96,7 @@ internal class LogRecordFormatter : IMessagePackFormatter<LogRecord>
 
 	public LogRecord Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options) => throw new NotSupportedException();
 
-	private void WriteHeader(ref MessagePackWriter writer, string keyName, MessagePackSerializerOptions options)
+	private static void WriteHeader(ref MessagePackWriter writer, string keyName)
 	{
 		var keyNameByteArray = Encoding.UTF8.GetBytes(keyName);
 		writer.WriteStringHeader(keyNameByteArray.Length);

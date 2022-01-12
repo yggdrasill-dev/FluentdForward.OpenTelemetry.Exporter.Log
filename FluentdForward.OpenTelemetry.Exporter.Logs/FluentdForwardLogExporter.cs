@@ -21,7 +21,9 @@ internal class FluentdForwardLogExporter : BaseExporter<LogRecord>
 
 		try
 		{
-			m_ExportClient.SendAsync(m_FluentdOptions.Tag, batch).GetAwaiter().GetResult();
+			m_ExportClient.SendAsync(m_FluentdOptions.Tag, batch)
+				.GetAwaiter()
+				.GetResult();
 
 			return ExportResult.Success;
 		}

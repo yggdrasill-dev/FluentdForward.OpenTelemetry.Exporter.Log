@@ -4,17 +4,17 @@ using Microsoft.Extensions.Logging;
 
 var builder = Host.CreateDefaultBuilder(args);
 
-builder.ConfigureLogging(logging =>
-{
-	logging.AddOpenTelemetry(otlOpt =>
+builder.ConfigureLogging(logging => logging.AddOpenTelemetry(
+	otlOpt =>
 	{
-		otlOpt.AddFluentdForwardExporter(options =>
-		{
-			options.Tag = "test";
-			options.UseMessagePack();
-		});
-	});
-});
+		otlOpt.IncludeFormattedMessage = true;
+		_ = otlOpt.AddFluentdForwardExporter(options =>
+		  {
+			  options.Host = "192.168.2.12";
+			  options.Tag = "ttt";
+			  options.UseMessagePack();
+		  });
+	}));
 
 var app = builder.Build();
 

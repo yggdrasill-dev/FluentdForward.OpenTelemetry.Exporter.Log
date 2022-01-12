@@ -15,8 +15,8 @@ internal class MessagePackSerializer : IMessagePackSerializer
 	/// </summary>
 	public MessagePackSerializer(IFormatterResolver[]? formatterResolvers = null)
 	{
-		if (formatterResolvers == null || formatterResolvers.Length == 0)
-			m_Options = MessagePackSerializerOptions.Standard
+		m_Options = formatterResolvers == null || formatterResolvers.Length == 0
+			? MessagePackSerializerOptions.Standard
 				.WithResolver(CompositeResolver.Create(new[] {
 				LogRecordFormatterResolver.Instance,
 				BuiltinResolver.Instance,
@@ -33,9 +33,8 @@ internal class MessagePackSerializer : IMessagePackSerializer
 
 				// final fallback(last priority)
 				DynamicContractlessObjectResolver.Instance,
-			}));
-		else
-			m_Options = MessagePackSerializerOptions.Standard
+			}))
+			: MessagePackSerializerOptions.Standard
 				.WithResolver(CompositeResolver.Create(formatterResolvers));
 	}
 
@@ -51,7 +50,7 @@ internal class MessagePackSerializer : IMessagePackSerializer
 		return global::MessagePack.MessagePackSerializer.Serialize(payload, m_Options);
 	}
 
-	private IEnumerable<ArrayPayloadBody<LogRecord>> ReadAsPayloadBody(Batch<LogRecord> batch)
+	private static IEnumerable<ArrayPayloadBody<LogRecord>> ReadAsPayloadBody(Batch<LogRecord> batch)
 	{
 		foreach (var record in batch)
 			yield return new ArrayPayloadBody<LogRecord>

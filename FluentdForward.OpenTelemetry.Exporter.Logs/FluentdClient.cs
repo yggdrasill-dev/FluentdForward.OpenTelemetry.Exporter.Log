@@ -9,10 +9,10 @@ namespace FluentdForward.OpenTelemetry.Exporter.Logs;
 /// </summary>
 internal class FluentdClient : IDisposable
 {
-	private readonly TcpClient _tcp;
-	private readonly FluentdOptions _setting;
-	private bool _disposed;
-	private NetworkStream _stream = default!;
+	private readonly TcpClient m_Tcp;
+	private readonly FluentdOptions m_Setting;
+	private bool m_Disposed;
+	private NetworkStream m_Stream = default!;
 
 	/// <summary>
 	/// Create a new <see cref="FluentdClient"/> instance.
@@ -20,10 +20,11 @@ internal class FluentdClient : IDisposable
 	/// <param name="setting">The setting for connecting to fluentd server.</param>
 	public FluentdClient(FluentdOptions setting)
 	{
-		_setting = setting ?? throw new ArgumentNullException(nameof(setting));
-		_tcp = new TcpClient();
-
-		_tcp.NoDelay = true;
+		m_Setting = setting ?? throw new ArgumentNullException(nameof(setting));
+		m_Tcp = new TcpClient
+		{
+			NoDelay = true
+		};
 	}
 
 	/// <summary>
@@ -35,17 +36,17 @@ internal class FluentdClient : IDisposable
 	}
 
 	/// <inheritdoc cref="IFluentdClient.ConnectAsync" />
-	public async ValueTask ConnectAsync()
+	public async Task ConnectAsync()
 	{
-		if (_setting.Timeout.HasValue)
-			_tcp.SendTimeout = _setting.Timeout.Value;
+		if (m_Setting.Timeout.HasValue)
+			m_Tcp.SendTimeout = m_Setting.Timeout.Value;
 
-		await _tcp.ConnectAsync(_setting.Host, _setting.Port).ConfigureAwait(false);
+		await m_Tcp.ConnectAsync(m_Setting.Host, m_Setting.Port).ConfigureAwait(false);
 	}
 
-	public async ValueTask SendAsync(string tag, Batch<LogRecord> batch)
+	public async Task SendAsync(string tag, Batch<LogRecord> batch)
 	{
-		var value = _setting.Serializer!.Serialize(tag, batch);
+		var value = m_Setting.Serializer!.Serialize(tag, batch);
 
 		await SendAsyncInternal(value).ConfigureAwait(false);
 	}
@@ -65,27 +66,27 @@ internal class FluentdClient : IDisposable
 	/// <param name="disposing">Wether to free, release, or resetting unmanaged resources or not.</param>
 	protected virtual void Dispose(bool disposing)
 	{
-		if (_disposed)
+		if (m_Disposed)
 			return;
 
 		if (disposing)
 		{
-			_stream?.Dispose();
-			_tcp?.Dispose();
+			m_Stream?.Dispose();
+			m_Tcp?.Dispose();
 		}
 
-		_disposed = true;
+		m_Disposed = true;
 	}
 
-	private async ValueTask SendAsyncInternal(byte[] message)
+	private async Task SendAsyncInternal(byte[] message)
 	{
-		if (!_tcp.Connected)
+		if (!m_Tcp.Connected)
 			await ConnectAsync().ConfigureAwait(false);
 
-		_stream = _tcp.GetStream();
+		m_Stream = m_Tcp.GetStream();
 
-		await _stream.WriteAsync(message, 0, message.Length).ConfigureAwait(false);
+		await m_Stream.WriteAsync(message).ConfigureAwait(false);
 
-		await _stream.FlushAsync().ConfigureAwait(false);
+		await m_Stream.FlushAsync().ConfigureAwait(false);
 	}
 }

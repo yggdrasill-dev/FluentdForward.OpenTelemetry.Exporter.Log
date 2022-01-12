@@ -13,7 +13,7 @@ namespace FluentdForward.OpenTelemetry.MessagePack.UnitTests;
 [TestClass]
 public class SerializeTests
 {
-	private MessagePackSerializerOptions m_SerializerOptions = MessagePackSerializerOptions.Standard.WithResolver(CompositeResolver.Create(
+	private readonly MessagePackSerializerOptions m_SerializerOptions = MessagePackSerializerOptions.Standard.WithResolver(CompositeResolver.Create(
 		new[] {
 			LogRecordFormatterResolver.Instance,
 			BuiltinResolver.Instance,

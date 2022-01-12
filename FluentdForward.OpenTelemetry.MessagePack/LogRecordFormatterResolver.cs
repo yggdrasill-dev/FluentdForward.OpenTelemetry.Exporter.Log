@@ -8,20 +8,18 @@ public class LogRecordFormatterResolver : IFormatterResolver
 {
 	public static readonly IFormatterResolver Instance = new LogRecordFormatterResolver();
 
-	private Lazy<LogRecordFormatter> m_LogRecordFormatter = new(() => new LogRecordFormatter());
-	private Lazy<TimeFormatter> m_TimeFormatter = new(() => new TimeFormatter());
+	private readonly Lazy<LogRecordFormatter> m_LogRecordFormatter = new(() => new LogRecordFormatter());
+	private readonly Lazy<TimeFormatter> m_TimeFormatter = new(() => new TimeFormatter());
 
 	public IMessagePackFormatter<T>? GetFormatter<T>()
 	{
-		if (typeof(T) == typeof(LogRecord))
-			return (IMessagePackFormatter<T>)m_LogRecordFormatter.Value;
-
-		if (typeof(T) == typeof(DateTime)
+		return typeof(T) == typeof(LogRecord)
+			? (IMessagePackFormatter<T>)m_LogRecordFormatter.Value
+			: typeof(T) == typeof(DateTime)
 			|| typeof(T) == typeof(DateTimeOffset)
 			|| typeof(T) == typeof(DateTime?)
-			|| typeof(T) == typeof(DateTimeOffset?))
-			return (IMessagePackFormatter<T>)m_TimeFormatter.Value;
-
-		return null;
+			|| typeof(T) == typeof(DateTimeOffset?)
+			? (IMessagePackFormatter<T>)m_TimeFormatter.Value
+			: null;
 	}
 }
