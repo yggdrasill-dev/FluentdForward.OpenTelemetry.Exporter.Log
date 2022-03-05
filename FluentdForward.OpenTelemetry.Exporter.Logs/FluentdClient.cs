@@ -36,19 +36,26 @@ internal class FluentdClient : IDisposable
 	}
 
 	/// <inheritdoc cref="IFluentdClient.ConnectAsync" />
-	public async Task ConnectAsync()
+	public async Task ConnectAsync(CancellationToken cancellationToken)
 	{
 		if (m_Setting.Timeout.HasValue)
 			m_Tcp.SendTimeout = m_Setting.Timeout.Value;
 
+#if NETSTANDARD2_0
 		await m_Tcp.ConnectAsync(m_Setting.Host, m_Setting.Port).ConfigureAwait(false);
+#else
+		await m_Tcp.ConnectAsync(
+			m_Setting.Host,
+			m_Setting.Port,
+			cancellationToken).ConfigureAwait(false);
+#endif
 	}
 
-	public async Task SendAsync(string tag, Batch<LogRecord> batch)
+	public async Task SendAsync(string tag, Batch<LogRecord> batch, CancellationToken cancellationToken)
 	{
 		var value = m_Setting.Serializer!.Serialize(tag, batch);
 
-		await SendAsyncInternal(value).ConfigureAwait(false);
+		await SendAsyncInternal(value, cancellationToken).ConfigureAwait(false);
 	}
 
 	/// <summary>
@@ -78,15 +85,23 @@ internal class FluentdClient : IDisposable
 		m_Disposed = true;
 	}
 
-	private async Task SendAsyncInternal(byte[] message)
+	private async Task SendAsyncInternal(byte[] message, CancellationToken cancellationToken)
 	{
 		if (!m_Tcp.Connected)
-			await ConnectAsync().ConfigureAwait(false);
+			await ConnectAsync(cancellationToken).ConfigureAwait(false);
 
 		m_Stream = m_Tcp.GetStream();
 
-		await m_Stream.WriteAsync(message).ConfigureAwait(false);
+#if NETSTANDARD2_0
+		await m_Stream.WriteAsync(
+			message,
+			0,
+			message.Length,
+			cancellationToken).ConfigureAwait(false);
+#else
+		await m_Stream.WriteAsync(message, cancellationToken).ConfigureAwait(false);
+#endif
 
-		await m_Stream.FlushAsync().ConfigureAwait(false);
+		await m_Stream.FlushAsync(cancellationToken).ConfigureAwait(false);
 	}
 }
