@@ -55,7 +55,7 @@ internal class LogRecordFormatter : IMessagePackFormatter<LogRecord>
 				var stateType = value.State.GetType();
 
 				if (stateType.Name == "FormattedLogValues")
-					writer.WriteString(Encoding.UTF8.GetBytes(value.State.ToString()!));
+					global::MessagePack.MessagePackSerializer.Serialize(ref writer, new { Message = value.State.ToString()! }, options);
 				else
 					global::MessagePack.MessagePackSerializer.Serialize(stateType, ref writer, value.State, options);
 			});
@@ -63,7 +63,19 @@ internal class LogRecordFormatter : IMessagePackFormatter<LogRecord>
 			properties.Add((ref MessagePackWriter writer) =>
 			{
 				LogRecordFormatter.WriteHeader(ref writer, nameof(value.StateValues));
-				options.Resolver.GetFormatter<IReadOnlyList<KeyValuePair<string, object>>>().Serialize(ref writer, value.StateValues, options);
+				var dict = new Dictionary<string, object>();
+
+				writer.WriteArrayHeader(value.StateValues.Count);
+				foreach (var kv in value.StateValues)
+				{
+					var keyName = kv.Key;
+					if (string.IsNullOrEmpty(keyName))
+						keyName = "{source}";
+
+					writer.WriteMapHeader(1);
+					LogRecordFormatter.WriteHeader(ref writer, keyName);
+					global::MessagePack.MessagePackSerializer.Serialize(kv.Value.GetType(), ref writer, kv.Value, options);
+				}
 			});
 		properties.Add((ref MessagePackWriter writer) =>
 		{

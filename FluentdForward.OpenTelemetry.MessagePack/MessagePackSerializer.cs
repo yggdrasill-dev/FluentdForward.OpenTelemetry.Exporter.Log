@@ -18,22 +18,22 @@ internal class MessagePackSerializer : IMessagePackSerializer
 		m_Options = formatterResolvers == null || formatterResolvers.Length == 0
 			? MessagePackSerializerOptions.Standard
 				.WithResolver(CompositeResolver.Create(new[] {
-				LogRecordFormatterResolver.Instance,
-				BuiltinResolver.Instance,
-				AttributeFormatterResolver.Instance,
+					LogRecordFormatterResolver.Instance,
+					BuiltinResolver.Instance,
+					AttributeFormatterResolver.Instance,
 
-				// replace enum resolver
-				DynamicEnumAsStringResolver.Instance,
+					// replace enum resolver
+					DynamicEnumAsStringResolver.Instance,
 
-				DynamicGenericResolver.Instance,
-				DynamicUnionResolver.Instance,
-				DynamicObjectResolver.Instance,
+					DynamicGenericResolver.Instance,
+					DynamicUnionResolver.Instance,
+					DynamicObjectResolver.Instance,
 
-				PrimitiveObjectResolver.Instance,
+					PrimitiveObjectResolver.Instance,
 
-				// final fallback(last priority)
-				DynamicContractlessObjectResolver.Instance,
-			}))
+					// final fallback(last priority)
+					DynamicContractlessObjectResolver.Instance,
+				}))
 			: MessagePackSerializerOptions.Standard
 				.WithResolver(CompositeResolver.Create(formatterResolvers));
 	}
