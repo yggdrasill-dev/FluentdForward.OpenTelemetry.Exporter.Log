@@ -25,11 +25,20 @@ internal class LogRecordFormatter : IMessagePackFormatter<LogRecord>
 			}
 		};
 		if (value.Exception != null)
+		{
 			properties.Add((ref MessagePackWriter writer) =>
 			{
 				LogRecordFormatter.WriteHeader(ref writer, nameof(value.Exception));
 				options.Resolver.GetFormatter<string>().Serialize(ref writer, value.Exception.ToString(), options);
 			});
+			properties.Add((ref MessagePackWriter writer) =>
+			{
+				LogRecordFormatter.WriteHeader(ref writer, $"{nameof(value.Exception)}Type");
+				var type = value.Exception.GetType();
+				options.Resolver.GetFormatter<string>().Serialize(ref writer, type.FullName ?? type.Name, options);
+			});
+		}
+
 		if (value.FormattedMessage != null)
 			properties.Add((ref MessagePackWriter writer) =>
 			{
