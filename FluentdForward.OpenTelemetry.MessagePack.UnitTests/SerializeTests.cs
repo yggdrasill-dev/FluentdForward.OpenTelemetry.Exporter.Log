@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using System.Reflection;
 using MessagePack;
 using MessagePack.Resolvers;
@@ -219,6 +217,44 @@ public class SerializeTests
 		var expected = "[\"ttt\",[[1640151822,{\"CategoryName\":\"Test.Serialize\",\"EventId\":{\"Id\":1,\"Name\":null},\"FormattedMessage\":\"aabbcc\",\"LogLevel\":\"Information\",\"State\":{\"m\":\"aabbcc\"},\"Timestamp\":\"2021-12-22T05:43:42.5945187Z\",\"TraceFlags\":\"None\"}]]]";
 
 		var bytes = sut.Serialize("ttt", batch);
+		var actual = global::MessagePack.MessagePackSerializer.ConvertToJson(bytes);
+
+		Assert.AreEqual(expected, actual);
+	}
+
+	[TestMethod]
+	public void LogRecord_With_Exception_Serialize_Test()
+	{
+		var record = (LogRecord)Activator.CreateInstance(
+			typeof(LogRecord),
+			BindingFlags.CreateInstance | BindingFlags.NonPublic | BindingFlags.Instance,
+			null,
+			new object?[] {
+				default(IExternalScopeProvider),
+				DateTime.Parse("2021-12-22T05:43:42.5945187Z"),
+				"Test.Serialize",
+				LogLevel.Information,
+				new EventId(1),
+				"aabbcc",
+				new{
+					m = "aabbcc"
+				},
+				new NullReferenceException(),
+				default(IReadOnlyList<KeyValuePair<string, object>>)
+			},
+			null,
+			null)!;
+
+		var payload = new Payload<LogRecord>
+		{
+			Tag = "test",
+			Timestamp = record.Timestamp,
+			Message = record
+		};
+
+		var expected = "[\"test\",1640151822,{\"CategoryName\":\"Test.Serialize\",\"EventId\":{\"Id\":1,\"Name\":null},\"Exception\":\"System.NullReferenceException: Object reference not set to an instance of an object.\",\"ExceptionType\":\"System.NullReferenceException\",\"FormattedMessage\":\"aabbcc\",\"LogLevel\":\"Information\",\"State\":{\"m\":\"aabbcc\"},\"Timestamp\":\"2021-12-22T05:43:42.5945187Z\",\"TraceFlags\":\"None\"}]";
+
+		var bytes = global::MessagePack.MessagePackSerializer.Serialize(payload, m_SerializerOptions);
 		var actual = global::MessagePack.MessagePackSerializer.ConvertToJson(bytes);
 
 		Assert.AreEqual(expected, actual);
