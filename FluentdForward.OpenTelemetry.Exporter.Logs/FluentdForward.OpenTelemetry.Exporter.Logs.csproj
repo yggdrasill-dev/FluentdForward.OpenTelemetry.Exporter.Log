@@ -5,7 +5,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<LangVersion>10</LangVersion>
-		<Version>0.1.0</Version>
+		<Version>0.1.1</Version>
 		<Authors>Phoenix</Authors>
 		<Company>Valhalla</Company>
 		<Copyright>Copyright © 2021 Phoenix</Copyright>
@@ -17,7 +17,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="OpenTelemetry" Version="1.2.0-rc1" />
+		<PackageReference Include="OpenTelemetry" Version="1.2.0" />
 	</ItemGroup>
 
 </Project>
