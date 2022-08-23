@@ -15,27 +15,28 @@ internal class MessagePackSerializer : IMessagePackSerializer
 	/// </summary>
 	public MessagePackSerializer(IFormatterResolver[]? formatterResolvers = null)
 	{
-		m_Options = formatterResolvers == null || formatterResolvers.Length == 0
-			? MessagePackSerializerOptions.Standard
-				.WithResolver(CompositeResolver.Create(new[] {
-					LogRecordFormatterResolver.Instance,
-					BuiltinResolver.Instance,
-					AttributeFormatterResolver.Instance,
+		var resolvers = (formatterResolvers == null || formatterResolvers.Length == 0
+			? Array.Empty<IFormatterResolver>()
+			: formatterResolvers).Concat(new[] {
+				LogRecordFormatterResolver.Instance,
+				BuiltinResolver.Instance,
+				AttributeFormatterResolver.Instance,
 
-					// replace enum resolver
-					DynamicEnumAsStringResolver.Instance,
+				// replace enum resolver
+				DynamicEnumAsStringResolver.Instance,
 
-					DynamicGenericResolver.Instance,
-					DynamicUnionResolver.Instance,
-					DynamicObjectResolver.Instance,
+				DynamicGenericResolver.Instance,
+				DynamicUnionResolver.Instance,
+				DynamicObjectResolver.Instance,
 
-					PrimitiveObjectResolver.Instance,
+				PrimitiveObjectResolver.Instance,
 
-					// final fallback(last priority)
-					DynamicContractlessObjectResolver.Instance,
-				}))
-			: MessagePackSerializerOptions.Standard
-				.WithResolver(CompositeResolver.Create(formatterResolvers));
+				// final fallback(last priority)
+				DynamicContractlessObjectResolver.Instance,
+			});
+
+		m_Options = MessagePackSerializerOptions.Standard
+			.WithResolver(CompositeResolver.Create(resolvers.ToArray()));
 	}
 
 	/// <inheritdoc cref="IMessagePackSerializer.Serialize{T}(string, T)" />

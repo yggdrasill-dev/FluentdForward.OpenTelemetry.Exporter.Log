@@ -11,6 +11,10 @@ public class LogRecordFormatterResolver : IFormatterResolver
 	private readonly Lazy<LogRecordFormatter> m_LogRecordFormatter = new(() => new LogRecordFormatter());
 	private readonly Lazy<TimeFormatter> m_TimeFormatter = new(() => new TimeFormatter());
 
+	private LogRecordFormatterResolver()
+	{
+	}
+
 	public IMessagePackFormatter<T>? GetFormatter<T>()
 	{
 		return typeof(T) == typeof(LogRecord)
