@@ -9,7 +9,46 @@ namespace FluentdForward.OpenTelemetry.MessagePack;
 
 internal class LogRecordFormatter : IMessagePackFormatter<LogRecord>
 {
+	private readonly string? m_ExtendPropertyName;
+	private readonly Func<object?> m_ExtendObjectResolver = () => null;
+
+	public LogRecordFormatter()
+	{
+	}
+
+	public LogRecordFormatter(string extendPropertyName, Func<object> extendObjectResolver)
+	{
+		m_ExtendPropertyName = extendPropertyName;
+		m_ExtendObjectResolver = extendObjectResolver;
+	}
+
 	public void Serialize(ref MessagePackWriter writer, LogRecord value, MessagePackSerializerOptions options)
+	{
+		var properties = MakeValueToWriteProperties(value, options);
+
+		if (!string.IsNullOrWhiteSpace(m_ExtendPropertyName))
+		{
+			var propertyName = m_ExtendPropertyName!;
+			var extendValue = m_ExtendObjectResolver();
+
+			if (extendValue is not null)
+				properties.Add((ref MessagePackWriter writer) =>
+				{
+					LogRecordFormatter.WriteHeader(ref writer, propertyName);
+
+					global::MessagePack.MessagePackSerializer.Serialize(extendValue.GetType(), ref writer, extendValue, options);
+				});
+		}
+
+		writer.WriteMapHeader(properties.Count);
+
+		foreach (var propertyWriteFunc in properties)
+			propertyWriteFunc(ref writer);
+	}
+
+	public LogRecord Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options) => throw new NotSupportedException();
+
+	private static List<WriteProperty> MakeValueToWriteProperties(LogRecord value, MessagePackSerializerOptions options)
 	{
 		var properties = new List<WriteProperty>
 		{
@@ -108,14 +147,8 @@ internal class LogRecordFormatter : IMessagePackFormatter<LogRecord>
 				LogRecordFormatter.WriteHeader(ref writer, nameof(value.TraceState));
 				options.Resolver.GetFormatter<string>().Serialize(ref writer, value.TraceState, options);
 			});
-
-		writer.WriteMapHeader(properties.Count);
-
-		foreach (var func in properties)
-			func(ref writer);
+		return properties;
 	}
-
-	public LogRecord Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options) => throw new NotSupportedException();
 
 	private static void WriteHeader(ref MessagePackWriter writer, string keyName)
 	{
