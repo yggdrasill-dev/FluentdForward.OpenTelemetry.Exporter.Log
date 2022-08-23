@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 env:
-  BuildConfiguration: debug
+  BuildConfiguration: Release
   NugetSource: nuget.org
 
 jobs:
@@ -15,7 +15,7 @@ jobs:
     runs-on: self-hosted
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v3.0.1
 
       - name: Restore dependencies
         run: dotnet restore
