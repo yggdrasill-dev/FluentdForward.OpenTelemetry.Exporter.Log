@@ -1,11 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net6.0;net5.0;netstandard2.0</TargetFrameworks>
+		<TargetFrameworks>net6.0;netstandard2.0</TargetFrameworks>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<LangVersion>10</LangVersion>
-		<Version>0.1.4</Version>
+		<Version>0.2.0</Version>
 		<Authors>Phoenix</Authors>
 		<Company>Valhalla</Company>
 		<Copyright>Copyright © 2021 Phoenix</Copyright>
@@ -25,11 +25,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="MessagePack" Version="2.3.85" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.1" Condition="'$(TargetFramework)' == 'net6.0'" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0" Condition="'$(TargetFramework)' == 'net5.0'" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.2.0" Condition="'$(TargetFramework)' == 'netstandard2.0'" />
-		<PackageReference Include="System.Memory" Version="4.5.4" Condition="'$(TargetFramework)' == 'netstandard2.0'" />
+		<PackageReference Include="MessagePack" Version="2.4.35" />
 	</ItemGroup>
 
 	<ItemGroup>

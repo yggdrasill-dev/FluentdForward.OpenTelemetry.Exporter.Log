@@ -116,6 +116,9 @@ internal class LogRecordFormatter : IMessagePackFormatter<LogRecord>
 				writer.WriteArrayHeader(value.StateValues.Count);
 				foreach (var kv in value.StateValues)
 				{
+					if (kv.Value is null)
+						continue;
+
 					var keyName = kv.Key;
 					if (string.IsNullOrEmpty(keyName))
 						keyName = "{source}";
