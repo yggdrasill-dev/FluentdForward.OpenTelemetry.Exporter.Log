@@ -2,10 +2,10 @@
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-var builder = Host.CreateDefaultBuilder(args);
+var builder = Host.CreateApplicationBuilder(args);
 
-builder.ConfigureLogging(logging => logging.AddOpenTelemetry(
-	otlOpt =>
+builder.Logging
+	.AddOpenTelemetry(otlOpt =>
 	{
 		otlOpt.IncludeFormattedMessage = true;
 		_ = otlOpt.AddFluentdForwardExporter(options =>
@@ -14,7 +14,7 @@ builder.ConfigureLogging(logging => logging.AddOpenTelemetry(
 			  options.Tag = "ttt";
 			  options.UseMessagePack();
 		  });
-	}));
+	});
 
 var app = builder.Build();
 

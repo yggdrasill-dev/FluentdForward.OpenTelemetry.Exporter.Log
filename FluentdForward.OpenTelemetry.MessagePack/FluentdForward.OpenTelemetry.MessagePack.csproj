@@ -5,7 +5,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<LangVersion>10</LangVersion>
-		<Version>0.2.0</Version>
+		<Version>0.3.0</Version>
 		<Authors>Phoenix</Authors>
 		<Company>Valhalla</Company>
 		<Copyright>Copyright © 2021 Phoenix</Copyright>
@@ -25,7 +25,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="MessagePack" Version="2.4.35" />
+		<PackageReference Include="MessagePack" Version="2.5.108" />
 	</ItemGroup>
 
 	<ItemGroup>
