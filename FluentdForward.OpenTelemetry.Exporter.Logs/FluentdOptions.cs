@@ -25,7 +25,7 @@ public class FluentdOptions
 	/// </summary>
 	public IMessagePackSerializer? Serializer { get; set; }
 
-	public ExportProcessorType ExportProcessorType { get; set; } = ExportProcessorType.Simple;
+	public ExportProcessorType ExportProcessorType { get; set; } = ExportProcessorType.Batch;
 
 	/// <summary>
 	/// The timeout value for connecting to fluentd server. (Milliseconds)
