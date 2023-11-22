@@ -5,7 +5,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<LangVersion Condition="'$(TargetFramework)'=='net6.0' or '$(TargetFramework)'=='netstandard2.0'">10</LangVersion>
-		<Version>0.3.2-alpha</Version>
+		<Version>0.3.3</Version>
 		<Authors>Phoenix</Authors>
 		<Company>Valhalla</Company>
 		<Copyright>Copyright © 2021 Phoenix</Copyright>
@@ -16,7 +16,15 @@
 		<IsPackable>true</IsPackable>
 		<RootNamespace>FluentdForward.OpenTelemetry.MessagePack</RootNamespace>
 		<PackageId>FluentdForward.OpenTelemetry.MessagePack</PackageId>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
 	</PropertyGroup>
+
+	<ItemGroup>
+	  <None Include="..\..\PhoenixToolkits.EventBus\README.md">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
+	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="MessagePack" Version="2.5.129" />
