@@ -10,7 +10,6 @@ builder.Logging
 		otlOpt.IncludeFormattedMessage = true;
 		_ = otlOpt.AddFluentdForwardExporter(options =>
 		  {
-			  options.Host = "192.168.2.12";
 			  options.Tag = "ttt";
 			  options.UseMessagePack();
 		  });

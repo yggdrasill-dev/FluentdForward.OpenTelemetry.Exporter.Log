@@ -56,7 +56,10 @@ internal class MessagePackSerializer : IMessagePackSerializer
 		foreach (var record in batch)
 			yield return new ArrayPayloadBody<LogRecord>
 			{
-				Timestamp = record.Timestamp,
+				Metadata = new ArrayPayloadMetadata
+				{
+					Timestamp = record.Timestamp
+				},
 				Message = record
 			};
 	}

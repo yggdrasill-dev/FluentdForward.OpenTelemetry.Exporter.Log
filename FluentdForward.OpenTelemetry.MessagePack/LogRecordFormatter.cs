@@ -95,26 +95,14 @@ internal class LogRecordFormatter : IMessagePackFormatter<LogRecord>
 				LogRecordFormatter.WriteHeader(ref writer, nameof(value.SpanId));
 				options.Resolver.GetFormatter<string>()!.Serialize(ref writer, value.SpanId.ToString(), options);
 			});
-		if (value.State != null)
+		if (value.Attributes != null)
 			properties.Add((ref MessagePackWriter writer) =>
 			{
-				LogRecordFormatter.WriteHeader(ref writer, nameof(value.State));
-
-				var stateType = value.State.GetType();
-
-				if (stateType.Name == "FormattedLogValues")
-					global::MessagePack.MessagePackSerializer.Serialize(ref writer, new { Message = value.State.ToString()! }, options);
-				else
-					global::MessagePack.MessagePackSerializer.Serialize(stateType, ref writer, value.State, options);
-			});
-		if (value.StateValues != null)
-			properties.Add((ref MessagePackWriter writer) =>
-			{
-				LogRecordFormatter.WriteHeader(ref writer, nameof(value.StateValues));
+				LogRecordFormatter.WriteHeader(ref writer, nameof(value.Attributes));
 				var dict = new Dictionary<string, object>();
 
-				writer.WriteArrayHeader(value.StateValues.Count);
-				foreach (var kv in value.StateValues)
+				writer.WriteArrayHeader(value.Attributes.Count);
+				foreach (var kv in value.Attributes)
 				{
 					if (kv.Value is null)
 						continue;

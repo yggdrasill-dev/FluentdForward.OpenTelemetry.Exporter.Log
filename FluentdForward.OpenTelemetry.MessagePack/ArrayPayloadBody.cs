@@ -9,8 +9,7 @@ public class ArrayPayloadBody<TMessage>
 	/// Timestamp.
 	/// </summary>
 	[Key(0)]
-	[MessagePackFormatter(typeof(TimeStampFormatter))]
-	public DateTime Timestamp { get; set; }
+	public ArrayPayloadMetadata Metadata { get; set; } = default!;
 
 	/// <summary>
 	/// Message.
