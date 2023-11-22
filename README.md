@@ -1,0 +1,1 @@
+# FluentdForward.OpenTelemetry.Exporter.Log
