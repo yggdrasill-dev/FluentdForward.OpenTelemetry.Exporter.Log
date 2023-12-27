@@ -15,6 +15,8 @@ public static class LoggingExtensions
 		configure?.Invoke(exporterOptions);
 		var exporter = new FluentdForwardLogExporter(exporterOptions);
 
+		FluentdForwardExporterEventSource.Log.ExportRegister();
+
 		return exporterOptions.ExportProcessorType == ExportProcessorType.Simple
 			? loggerOptions.AddProcessor(new SimpleLogRecordExportProcessor(exporter))
 			: loggerOptions.AddProcessor(new BatchLogRecordExportProcessor(
