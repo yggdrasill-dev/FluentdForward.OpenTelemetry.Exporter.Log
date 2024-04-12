@@ -69,7 +69,7 @@ public class SerializeTests
 		var array = new ArrayPayload<string>
 		{
 			Tag = "ttt",
-			Body = new[] {
+			Body = [
 				new ArrayPayloadBody<string>{
 					Metadata = new ArrayPayloadMetadata
 					{
@@ -84,7 +84,7 @@ public class SerializeTests
 					},
 					Message = "test2"
 				},
-			}
+			]
 		};
 
 		var expected = "[\"ttt\",[[[1640151822,{}],\"test1\"],[[1640151822,{}],\"test2\"]]]";
@@ -125,7 +125,7 @@ public class SerializeTests
 		var array = new ArrayPayload<LogRecord>
 		{
 			Tag = "ttt",
-			Body = new[] {
+			Body = [
 				new ArrayPayloadBody<LogRecord>{
 					Metadata = new ArrayPayloadMetadata
 					{
@@ -133,7 +133,7 @@ public class SerializeTests
 					},
 					Message = record
 				}
-			}
+			]
 		};
 
 		var expected = "[\"ttt\",[[[1640151822,{}],{\"CategoryName\":\"Test.Serialize\",\"EventId\":{\"Id\":1,\"Name\":null},\"FormattedMessage\":\"aabbcc\",\"LogLevel\":\"Information\",\"Attributes\":[{\"m\":\"aabbcc\"}],\"Timestamp\":\"2021-12-22T05:43:42.5945187Z\",\"TraceFlags\":\"None\"}]]]";
