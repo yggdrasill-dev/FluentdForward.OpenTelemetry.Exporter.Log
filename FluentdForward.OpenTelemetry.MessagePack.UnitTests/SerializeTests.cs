@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Reflection;
+﻿using System.Reflection;
 using MessagePack;
 using MessagePack.Resolvers;
 using Microsoft.Extensions.Logging;
@@ -87,7 +86,7 @@ public class SerializeTests
 			]
 		};
 
-		var expected = "[\"ttt\",[[[1640151822,{}],\"test1\"],[[1640151822,{}],\"test2\"]]]";
+		var expected = "[\"ttt\",[[[1640151822594000000,{}],\"test1\"],[[1640151822594000000,{}],\"test2\"]]]";
 
 		var bytes = global::MessagePack.MessagePackSerializer.Serialize(array, m_SerializerOptions);
 		var actual = global::MessagePack.MessagePackSerializer.ConvertToJson(bytes);
@@ -136,7 +135,7 @@ public class SerializeTests
 			]
 		};
 
-		var expected = "[\"ttt\",[[[1640151822,{}],{\"CategoryName\":\"Test.Serialize\",\"EventId\":{\"Id\":1,\"Name\":null},\"FormattedMessage\":\"aabbcc\",\"LogLevel\":\"Information\",\"Attributes\":[{\"m\":\"aabbcc\"}],\"Timestamp\":\"2021-12-22T05:43:42.5945187Z\",\"TraceFlags\":\"None\"}]]]";
+		var expected = "[\"ttt\",[[[1640151822594000000,{}],{\"CategoryName\":\"Test.Serialize\",\"EventId\":{\"Id\":1,\"Name\":null},\"FormattedMessage\":\"aabbcc\",\"LogLevel\":\"Information\",\"Attributes\":[{\"m\":\"aabbcc\"}],\"Timestamp\":\"2021-12-22T05:43:42.5945187Z\",\"TraceFlags\":\"None\"}]]]";
 
 		var bytes = global::MessagePack.MessagePackSerializer.Serialize(array, m_SerializerOptions);
 		var actual = global::MessagePack.MessagePackSerializer.ConvertToJson(bytes);
@@ -156,7 +155,7 @@ public class SerializeTests
 			null,
 			[
 				default(IExternalScopeProvider),
-				DateTime.Parse("2021-12-22T05:43:42.5945187Z"),
+				DateTime.Parse("2021-12-22T05:43:42.0000000Z"),
 				"Test.Serialize",
 				LogLevel.Information,
 				new EventId(1),
@@ -172,8 +171,7 @@ public class SerializeTests
 			null)!
 		], 1);
 
-		var expected = "[\"ttt\",[[[1640151822,{}],{\"CategoryName\":\"Test.Serialize\",\"EventId\":{\"Id\":1,\"Name\":null},\"FormattedMessage\":\"aabbcc\",\"LogLevel\":\"Information\",\"Timestamp\":\"2021-12-22T05:43:42.5945187Z\",\"TraceFlags\":\"None\"}]]]";
-
+		var expected = "[\"ttt\",[[[1640151822000000000,{}],{\"CategoryName\":\"Test.Serialize\",\"EventId\":{\"Id\":1,\"Name\":null},\"FormattedMessage\":\"aabbcc\",\"LogLevel\":\"Information\",\"Timestamp\":\"2021-12-22T05:43:42.0000000Z\",\"TraceFlags\":\"None\"}]]]";
 		var bytes = sut.Serialize("ttt", batch);
 		var actual = global::MessagePack.MessagePackSerializer.ConvertToJson(bytes);
 

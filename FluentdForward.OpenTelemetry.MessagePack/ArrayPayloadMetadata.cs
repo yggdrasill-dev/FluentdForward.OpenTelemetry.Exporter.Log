@@ -11,7 +11,7 @@ public class ArrayPayloadMetadata
 	/// Timestamp.
 	/// </summary>
 	[Key(0)]
-	[MessagePackFormatter(typeof(TimeStampFormatter))]
+	[MessagePackFormatter(typeof(TimestampFormatter))]
 	public DateTime Timestamp { get; set; }
 
 	[Key(1)]
