@@ -7,6 +7,7 @@ using OpenTelemetry.Logs;
 
 namespace FluentdForward.OpenTelemetry.MessagePack;
 
+[ExcludeFormatterFromSourceGeneratedResolver]
 internal class LogRecordFormatter : IMessagePackFormatter<LogRecord>
 {
 	private readonly string? m_ExtendPropertyName;
@@ -36,7 +37,7 @@ internal class LogRecordFormatter : IMessagePackFormatter<LogRecord>
 				{
 					LogRecordFormatter.WriteHeader(ref writer, propertyName);
 
-					global::MessagePack.MessagePackSerializer.Serialize(extendValue.GetType(), ref writer, extendValue, options);
+					MessagePackValueWriter.Write(ref writer, extendValue);
 				});
 		}
 
@@ -87,7 +88,8 @@ internal class LogRecordFormatter : IMessagePackFormatter<LogRecord>
 		properties.Add((ref MessagePackWriter writer) =>
 		{
 			LogRecordFormatter.WriteHeader(ref writer, nameof(value.LogLevel));
-			options.Resolver.GetFormatter<LogLevel>()!.Serialize(ref writer, value.LogLevel, options);
+			// enum 以字串輸出（取代 DynamicEnumAsStringResolver，AOT 下無動態產碼）。
+			writer.Write(value.LogLevel.ToString());
 		});
 		if (value.SpanId != default)
 			properties.Add((ref MessagePackWriter writer) =>
@@ -113,7 +115,7 @@ internal class LogRecordFormatter : IMessagePackFormatter<LogRecord>
 
 					writer.WriteMapHeader(1);
 					LogRecordFormatter.WriteHeader(ref writer, keyName);
-					global::MessagePack.MessagePackSerializer.Serialize(kv.Value.GetType(), ref writer, kv.Value, options);
+					MessagePackValueWriter.Write(ref writer, kv.Value);
 				}
 			});
 		properties.Add((ref MessagePackWriter writer) =>
@@ -124,7 +126,8 @@ internal class LogRecordFormatter : IMessagePackFormatter<LogRecord>
 		properties.Add((ref MessagePackWriter writer) =>
 		{
 			LogRecordFormatter.WriteHeader(ref writer, nameof(value.TraceFlags));
-			options.Resolver.GetFormatter<ActivityTraceFlags>()!.Serialize(ref writer, value.TraceFlags, options);
+			// enum 以字串輸出（取代 DynamicEnumAsStringResolver，AOT 下無動態產碼）。
+			writer.Write(value.TraceFlags.ToString());
 		});
 		if (value.TraceId != default)
 			properties.Add((ref MessagePackWriter writer) =>

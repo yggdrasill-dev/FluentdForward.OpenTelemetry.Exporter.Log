@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+  </Folder>
+  <Project Path="FluentdForward.OpenTelemetry.Exporter.Logs/FluentdForward.OpenTelemetry.Exporter.Logs.csproj" />
+  <Project Path="FluentdForward.OpenTelemetry.MessagePack.UnitTests/FluentdForward.OpenTelemetry.MessagePack.UnitTests.csproj" />
+  <Project Path="FluentdForward.OpenTelemetry.MessagePack/FluentdForward.OpenTelemetry.MessagePack.csproj" />
+  <Project Path="TestConsole/TestConsole.csproj" />
+</Solution>

@@ -1,5 +1,6 @@
 ﻿using FluentdForward.OpenTelemetry.Exporter.Logs;
 using MessagePack;
+using MessagePack.Formatters;
 using MessagePack.Resolvers;
 using OpenTelemetry;
 using OpenTelemetry.Logs;
@@ -15,28 +16,29 @@ internal class MessagePackSerializer : IMessagePackSerializer
 	/// </summary>
 	public MessagePackSerializer(IFormatterResolver[]? formatterResolvers = null)
 	{
+		// AOT-safe resolver 鏈：完全不使用會走 Reflection.Emit 的 Dynamic* resolver。
+		// 手寫 formatter（payload 走 IntKey 陣列、EventId 走 {Id,Name} map）優先，其後為：
+		// - 呼叫端傳入的 resolver（含 extend 資訊的 LogRecordFormatterResolver）
+		// - LogRecordFormatterResolver：LogRecord 與 DateTime（TimeFormatter）
+		// - Builtin / Attribute：string、數值等內建靜態 formatter
+		var formatters = new IMessagePackFormatter[]
+		{
+			new ArrayPayloadFormatter<LogRecord>(),
+			new ArrayPayloadBodyFormatter<LogRecord>(),
+			new ArrayPayloadMetadataFormatter(),
+			new EventIdFormatter(),
+		};
+
 		var resolvers = (formatterResolvers == null || formatterResolvers.Length == 0
 			? Array.Empty<IFormatterResolver>()
 			: formatterResolvers).Concat(new[] {
 				LogRecordFormatterResolver.Instance,
 				BuiltinResolver.Instance,
 				AttributeFormatterResolver.Instance,
-
-				// replace enum resolver
-				DynamicEnumAsStringResolver.Instance,
-
-				DynamicGenericResolver.Instance,
-				DynamicUnionResolver.Instance,
-				DynamicObjectResolver.Instance,
-
-				PrimitiveObjectResolver.Instance,
-
-				// final fallback(last priority)
-				DynamicContractlessObjectResolver.Instance,
 			});
 
 		m_Options = MessagePackSerializerOptions.Standard
-			.WithResolver(CompositeResolver.Create(resolvers.ToArray()));
+			.WithResolver(CompositeResolver.Create(formatters, resolvers.ToArray()));
 	}
 
 	/// <inheritdoc cref="IMessagePackSerializer.Serialize{T}(string, T)" />

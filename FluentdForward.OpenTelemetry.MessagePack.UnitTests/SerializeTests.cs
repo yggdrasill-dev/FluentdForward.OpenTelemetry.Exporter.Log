@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using MessagePack;
+using MessagePack.Formatters;
 using MessagePack.Resolvers;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -11,23 +12,20 @@ namespace FluentdForward.OpenTelemetry.MessagePack.UnitTests;
 [TestClass]
 public class SerializeTests
 {
+	// AOT-safe resolver 鏈（與 MessagePackSerializer 內部一致，不使用任何 Dynamic* resolver）。
 	private readonly MessagePackSerializerOptions m_SerializerOptions = MessagePackSerializerOptions.Standard.WithResolver(CompositeResolver.Create(
-		new[] {
+		new IMessagePackFormatter[] {
+			new ArrayPayloadFormatter<string>(),
+			new ArrayPayloadBodyFormatter<string>(),
+			new ArrayPayloadFormatter<LogRecord>(),
+			new ArrayPayloadBodyFormatter<LogRecord>(),
+			new ArrayPayloadMetadataFormatter(),
+			new EventIdFormatter(),
+		},
+		new IFormatterResolver[] {
 			LogRecordFormatterResolver.Instance,
 			BuiltinResolver.Instance,
 			AttributeFormatterResolver.Instance,
-
-			// replace enum resolver
-			DynamicEnumAsStringResolver.Instance,
-
-			DynamicGenericResolver.Instance,
-			DynamicUnionResolver.Instance,
-			DynamicObjectResolver.Instance,
-
-			PrimitiveObjectResolver.Instance,
-
-			// final fallback(last priority)
-			DynamicContractlessObjectResolver.Instance,
 		}));
 
 	[TestMethod]

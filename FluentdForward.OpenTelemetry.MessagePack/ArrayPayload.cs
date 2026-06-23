@@ -1,16 +1,12 @@
-﻿using MessagePack;
-
 namespace FluentdForward.OpenTelemetry.MessagePack;
 
-[MessagePackObject]
+// 序列化由 ArrayPayloadFormatter<TMessage> 處理（IntKey 陣列格式），為 AOT 相容而不使用 [MessagePackObject]。
 public class ArrayPayload<TMessage>
 {
 	/// <summary>
 	/// Tag.
 	/// </summary>
-	[Key(0)]
 	public string Tag { get; set; } = default!;
 
-	[Key(1)]
 	public IEnumerable<ArrayPayloadBody<TMessage>> Body { get; set; } = default!;
 }
